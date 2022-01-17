@@ -1,0 +1,118 @@
+Default vesamenu.c32
+
+Menu color border 0 #0000 #0000 none
+
+MENU BACKGROUND back.png
+
+MENU MASTER PASSWD $1$rkd3$usOefCzzkUfRN03RYpp430
+
+
+Prompt 0
+
+Timeout 1000
+
+MENU TITLE High Speed Download Iso File
+
+LABEL (1)Boot From Http WINPE
+
+MENU LABEL (1)Boot From Http Mini PE
+
+MENU PASSWD $1$rkd3$usOefCzzkUfRN03RYpp430
+
+Kernel memdisk
+
+Append raw iso initrd=http://192.168.1.1:88/winpe.iso
+
+ENDTEXT
+
+LABEL (2)Boot From Http WIN8PEPE
+
+MENU LABEL (2)Boot From Http WIN8PE Network
+
+Kernel memdisk
+
+Append raw iso initrd=http://192.168.1.1:88/win8penet.iso
+
+ENDTEXT
+
+LABEL (3)Boot From Http WIN10PE
+
+MENU LABEL (3)Boot From Http WIN10PE Network
+
+Kernel memdisk
+
+Append raw iso initrd=http://192.168.1.1:88/win10simpile.iso 
+
+LABEL (4)Boot From Ftp Mini PE
+
+MENU LABEL (4)Boot From Ftp Mini PE
+
+Kernel memdisk
+
+Append raw iso initrd=ftp://192.168.1.1/winpe.iso
+
+ENDTEXT
+
+LABEL (5)Boot From Ftp WIN8PE
+
+MENU LABEL (5)Boot From Ftp WIN8PE Network
+
+Kernel memdisk
+
+Append raw iso initrd=ftp://192.168.1.1/win8penet.iso
+
+ENDTEXT
+
+LABEL (6)Boot From Ftp WIN10PE
+
+MENU LABEL (6)Boot From Ftp WIN10PE
+
+Kernel memdisk
+
+Append raw iso initrd=ftp://192.168.1.1/win10simpile.iso
+
+ENDTEXT
+
+LABEL (7)Boot From HDD
+
+MENU LABEL (7)Boot From HDD
+
+Kernel chain.c32
+
+Append hd0
+
+ENDTEXT
+
+LABEL (8)Reset
+
+MENU LABEL (8)Reset
+
+Kernel reboot.c32
+
+ENDTEXT
+
+LABEL (9)Power Off
+ 
+MENU LABEL (9)Power Off
+
+Kernel poweroff.c32
+
+ENDTEXT
+
+LABEL (0)Slow TFTP Boot
+
+boot ipxegrldr pxekeep
+
+ENDTEXT
+
+LABEL (11)Boot From Ftp WIN10PE
+
+MENU LABEL (11)Boot From Ftp WIN10PE
+
+kernel ftp://192.168.1.1/casper/vmlinuz.efi
+
+Append file=/cdrom/preseed/ubuntu.seed boot=casper initrd=/casper/initrd.lz quiet splash ---
+
+ENDTEXT
+
+Menu end
