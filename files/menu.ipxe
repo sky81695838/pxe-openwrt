@@ -1,0 +1,113 @@
+#!ipxe
+menu Welcome to iPXE's Boot Menu echo Platform: ${platform} Buildarch: ${buildarch}
+dhcp
+:menu
+item --gap -- -------Windows Preinstallation Environment-----------------------------
+item Windows8PEx86 Windows 8 PE x86 with Network 
+item Windows10PE  Windows 10 PE with Network 
+
+item --gap -- ------------------------------ Linux ---------------------------------
+item ubuntu ubuntu18.04 with nfs commandline
+item ubuntu-xfce xubuntu20.04-xfce with nfs
+item install-ubuntu18 install ubuntu18.04lts
+item install-ubuntu18ser install ubuntu18.04 server
+item ubuntu20 ubuntu20.04lts
+item ubuntu20ser install ubuntu20.04ser
+item install-centos install  centos7
+item porteus  porteus
+
+item --gap -- ------------------------------ Advanced ---------------------------------
+item config       Configure settings
+item shell      Enter iPXE shell
+item reboot     Reboot
+item exit       Exit (boot local disk)
+choose --default exit --timeout 30000 target && goto ${target}
+
+:shell
+echo Type exit to get the back to the menu
+shell
+set menu-timeout 0
+goto start
+
+:Windows10PE
+initrd http://192.168.1.123:88/win10pe.iso
+chain http://192.168.1.123:88/memdisk iso raw || goto failed #loads but halts after windows logo
+goto start 
+
+:Windows8PEx86
+initrd http://192.168.1.123:88/win8pe.iso
+chain http://192.168.1.123:88/memdisk iso raw || goto failed #loads but halts after windows logo
+goto start  
+
+:failed
+echo Booting failed, dropping to shell
+goto shell
+
+:reboot
+reboot
+
+:debian
+set server http://192.168.1.123:88
+kernel ${server}/debian/vmlinuz
+initrd ${server}/debian/initrd.img
+imgargs vmlinuz initrd=initrd.img  boot=overlay  ip=dhcp  text vga=791  sqimage=buster_server.squashfs  squrl=http://192.168.1.123:88/debian  rw locale=zh_CN quiet --
+boot
+
+:ubuntu
+set server http://192.168.1.123:88
+set nfs 192.168.1.123:/mnt/netboot/ubuntu18-nfs
+kernel ${server}/ubuntu18-nfs/vmlinuz || read void
+initrd ${server}/ubuntu18-nfs/initrd.img || read void
+imgargs vmlinuz initrd=initrd.img boot=nfs nfsroot=${nfs} ip=dhcp rw splash quiet -- || read void
+boot
+
+:ubuntu-xfce
+set server http://192.168.1.123:88
+set nfs 192.168.1.123:/mnt/netboot/nfs-x20
+kernel ${server}/nfs-x20/boot/vmlinuz-5.4.0-65-generic || read void
+initrd ${server}/nfs-x20/boot/initrd.img-5.4.0-65-generic || read void
+imgargs vmlinuz-5.4.0-65-generic initrd=initrd.img-5.4.0-65-generic boot=nfs nfsroot=${nfs} ip=dhcp rw splash quiet -- || read void
+boot
+
+:install-ubuntu18
+set server http://192.168.1.123:88
+set nfs 192.168.1.123:/mnt/netboot/u18-desktop
+kernel ${server}/u18-desktop/casper/vmlinuz || read void
+initrd ${server}/u18-desktop/casper/initrd.img || read void
+imgargs vmlinuz initrd=initrd boot=casper root=/dev/nfs netboot=nfs nfsroot=${nfs}/casper ip=dhcp splash toram -- || read void
+boot
+
+:install-ubuntu18ser
+set server http://192.168.1.123:88
+set nfs 192.168.1.123:/mnt/netboot/u18-server
+kernel ${server}/u18-server/casper/vmlinuz || read void
+initrd ${server}/u18-server/casper/initrd || read void
+imgargs vmlinuz initrd=initrd boot=casper root=/dev/nfs netboot=nfs nfsroot=${nfs}/casper ip=dhcp splash toram -- || read void
+boot
+
+:ubuntu20
+set server http://192.168.1.123:88
+set nfs 192.168.1.123:/mnt/netboot/u20-desktop
+kernel ${server}/u20-desktop/casper/vmlinuz || read void
+initrd ${server}/u20-desktop/casper/initrd || read void
+imgargs vmlinuz initrd=initrd boot=casper netboot=nfs nfsroot=${nfs} ip=dhcp splash quiet -- || read void
+boot
+
+:ubuntu20ser
+set server http://192.168.1.123:88
+set nfs 192.168.1.123:/mnt/netboot/u20-server
+kernel ${server}/u20-server/casper/vmlinuz || read void
+initrd ${server}/u20-server/casper/initrd || read void
+imgargs vmlinuz initrd=initrd boot=casper root=/dev/nfs netboot=nfs nfsroot=${nfs}/casper ip=dhcp splash toram -- || read void
+boot
+
+:install-centos
+
+#imgargs vmlinuz initrd=initrd.img  boot=overlay  ip=dhcp  text vga=791  sqimage=buster_server.squashfs  squrl=http://192.168.1.123:88/debian  rw locale=zh_CN quiet --
+
+:porteus
+set server http://192.168.1.123:88
+kernel ${server}/porteus/vmlinuz || read void
+initrd ${server}//porteus/initrd.xz || read void
+imgargs vmlinuz initrd=initrd || read void
+boot
